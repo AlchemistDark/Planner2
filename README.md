@@ -1,16 +1,23 @@
-# planner
+# Planner
 
-A new Flutter project.
+An application for planning and tracking both your own holidays,
+and the holidays of your friends.
 
-## Getting Started
+This application is written primarily for the web platform.
+It is written for Russian-speaking users by a Russian-speaking team,
+therefore, most of the documentation can also be in Russian.
+In the future, it is possible to connect other popular languages.
 
-This project is a starting point for a Flutter application.
+All rights belong to Taplan LLC.
+For any questions write to alchemistplus@gmail.com
 
-A few resources to get you started if this is your first Flutter project:
+Приложение для планирования и отслеживания как ваших собственных праздников, 
+так и праздников ваших друзей.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Это приложение написано в первую очередь для веб-платформы.
+Оно написано для русскоязычных пользователей русскоязычной командой,
+поэтому большая часть документации так же может быть на русском языке.
+В дальнейшем возможно подключение других популярных языков.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Все права принадлежат ООО "Таплан".
+По всем вопросам писать на alchemistplus@gmail.com
