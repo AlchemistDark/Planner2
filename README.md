@@ -1,7 +1,9 @@
 # Planner
 
-An application for planning and tracking both your own holidays,
+The application for planning and tracking both your own holidays,
 and the holidays of your friends.
+
+This application is a client (front-end part) and does not work without a special server.
 
 This application is written primarily for the web platform.
 It is written for Russian-speaking users by a Russian-speaking team,
@@ -13,6 +15,8 @@ For any questions write to alchemistplus@gmail.com
 
 Приложение для планирования и отслеживания как ваших собственных праздников, 
 так и праздников ваших друзей.
+
+Это приложение является клиентом (front-end частью) и не работает без специального сервера.
 
 Это приложение написано в первую очередь для веб-платформы.
 Оно написано для русскоязычных пользователей русскоязычной командой,
