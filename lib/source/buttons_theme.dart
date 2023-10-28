@@ -1,3 +1,5 @@
+// Цвета и градиетны для кнопок.
+
 import 'package:flutter/material.dart';
 
 final LinearGradient buttonGradient = LinearGradient(

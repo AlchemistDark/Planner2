@@ -1,39 +1,105 @@
-import 'dart:html';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:planner/global/variables and constants.dart' as global;
+
+/// Logic for [LoginScreen] class.
 class LoginLogic{
+
+  static const String _tokenURL = 'https://qviz.fun/auth/token/login';
+
+  ResponseStatus responseStatus = ResponseStatus.unKnownError;
 
   final http.Client client;
 
   LoginLogic({required this.client});
 
-  /// Функция получения токена доступа к серверу бэкэнда.
-  // Future<void> login() async{
-  //   await Future.delayed(const Duration(seconds: 3), () {
-  //     print(provider.authState.isAuthSuccess);
+  /// JSON parsing function that the server produces in response
+  /// to a request for an access token.
+  String tokenFromJson(Map<String, dynamic> json){
+    String result = json['auth_token'] as String;
+    return result;
+  }
+
+  /// Opens alertDialog.
+  // void openDialog(){
+  //   showDialog(context: context, builder: (BuildContext context){
+  //     return AlertDialog(
+  //       title: Text("Предупреждение!"),
+  //       content: Text("Вы действительно хотите удалить $id из списка контактов?"),
+  //       actions: [
+  //         ElevatedButton(
+  //             onPressed: () async {
+  //               widget.appController.celebrateDelete(id, widget.token);
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text("Удалить")),
+  //         ElevatedButton(
+  //             onPressed: (){Navigator.of(context).pop();},
+  //             child: const Text("Отмена")),
+  //       ],
+  //     );
   //   });
-  //   final String token = provider.authState.token;//"44d8fdc7dc9c0a05c5f0bcbe4f32b2fdd5f02424";
-  //   print(token);
-  //   await provider.postRequest(token);
-  //   await provider.contactListRequest(token);
-  //   List<Contact> contactList = provider.contactList;
-  //
-  //   String responseAnswer = utf8.decode(provider.postResponse.response.bodyBytes);
-  //   final Person person = Person.fromJson(jsonDecode(responseAnswer));
-  //   print('праздников пришло ${person.celebrates.length}');
-  //   print("${person.celebrates[0].id}, ${person.celebrates[0].day} ${person.celebrates[0].month} ${person.celebrates[0].date}");
-  //   print("${person.celebrates[0].name}, ${person.celebrates[0].icon} ${person.celebrates[0].peopleCategory} ${person.celebrates[0].celebrateCategory}");
-  //   AppController appController = AppController(person, contactList);
-  //   Navigator.push(
-  //       context, MaterialPageRoute(
-  //       builder: (context) {
-  //         print("дошло до сюда");
-  //         return MainPlannerScreen(widget.title, widget.mainWidth, appController, token);
-  //         // return MokScreen(widget.title, widget.mainWidth, appController, token);
-  //       }
-  //   )
-  //   );
   // }
 
+  /// Function for obtaining an access token to the backend server.
+  Future<http.Response?> getToken({required String number, required String pass}) async {
+    http.Response? response = await client.post(
+      Uri.parse(_tokenURL),
+      body: {
+        'phoneNumber': number,
+        'password': pass
+      },
+    ).then((response){
+      switch(response.statusCode) {
+        case 200:
+          global.token = tokenFromJson(json.decode(response.body));
+          responseStatus = ResponseStatus.oK;
+          if (kDebugMode) {
+            print("Код статуса ответа сервера: ${response.statusCode}");
+          }
+          break;
+        case 400:
+          responseStatus = ResponseStatus.loginDataIncorrect;
+          if (kDebugMode) {
+            print("Код статуса ответа сервера: ${response.statusCode}");
+          }
+          break;
+        case 404:
+          responseStatus = ResponseStatus.pageDoesNotExist;
+          if (kDebugMode) {
+            print("Код статуса ответа сервера: ${response.statusCode}");
+          }
+          break;
+        default:
+          if (kDebugMode) {
+            print("Код статуса ответа сервера: ${response.statusCode}");
+          }
+      }
+    }).catchError((error){
+      if (error.runtimeType == http.ClientException) {
+        if (error.message == 'XMLHttpRequest error.') {
+          responseStatus = ResponseStatus.serverDonTWork;
+          if (kDebugMode) {
+            print("Сообщение об ошибке: ${error.message}");
+          }
+        }
+      }
+      if (kDebugMode) {
+        print("Тип ошибки: ${error.runtimeType}");
+      }
+    });
+    return response;
+  }
+
+}
+
+enum ResponseStatus{
+  loginDataIncorrect,
+  oK,
+  pageDoesNotExist,
+  serverDonTWork,
+  unKnownError
 }

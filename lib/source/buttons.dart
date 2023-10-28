@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:planner/source/buttons_theme.dart';
 
+/// The rectangular button that is used everywhere in the application.
 class RectangularButton extends StatelessWidget {
   final String caption;
   final Function onTap;

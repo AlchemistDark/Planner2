@@ -1,3 +1,5 @@
+// Здесь перечислены все цвета для экрана 1.3.
+
 import 'package:flutter/material.dart';
 
 const Color asterixColor = Color(0xFFEB5757);

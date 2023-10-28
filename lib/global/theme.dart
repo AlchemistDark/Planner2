@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 // import 'package:site_xz/global/paths.dart';
 
 /// Custom theme model.
-
 AppTheme? appTheme;
 
 class AppTheme{

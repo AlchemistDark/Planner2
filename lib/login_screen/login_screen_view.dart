@@ -1,9 +1,12 @@
-import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:planner/global/variables and constants.dart' as global;
 
 import 'package:planner/login_screen/login_screen_inscriptions.dart';
 import 'package:planner/login_screen/login_screen_logic.dart';
@@ -12,9 +15,7 @@ import 'package:planner/login_screen/login_screen_theme.dart';
 
 import 'package:planner/source/buttons.dart';
 
-// import 'package:site_xz/custom_icons.dart';
 // import 'package:http/http.dart' as http;
-// import 'package:site_xz/mok2.dart';
 //
 // import 'global/app_controller.dart';
 // import 'global/person_class.dart';
@@ -22,6 +23,7 @@ import 'package:planner/source/buttons.dart';
 // import 'global/provider.dart';
 // import 'main_screen/planner_main_screen_view.dart';
 
+/// Screen 1.3
 class LoginScreen extends StatefulWidget {
 
   final LoginLogic logic;
@@ -37,6 +39,62 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  String _phoneNumber = "";
+  String _password = "";
+  bool _isObscure = true;
+
+  /// Open mine screen.
+
+  // void open(){
+  //   Navigator.push(
+  //           context, MaterialPageRoute(
+  //             builder: (context) {
+  //               print("дошло до сюда");
+  //               return MainPlannerScreen(widget.title, widget.mainWidth, appController, token);
+  //               // return MokScreen(widget.title, widget.mainWidth, appController, token);
+  //             }
+  //           )
+  //         );
+  // }
+
+  /// User Sign In.
+  Future<void> signIn() async{
+    await widget.logic.getToken(number: _phoneNumber, pass: _password);
+    switch (widget.logic.responseStatus){
+      case ResponseStatus.loginDataIncorrect:
+        if(mounted){
+          showDialog(context: context, builder: (BuildContext context){
+            return MiniAlertDialog(caption: alertMessageLoginDataIncorrect);
+          });
+        }
+        break;
+      case ResponseStatus.oK:
+        // if(mounted){// ToDo
+        //   open();
+        // }
+        break;
+      case ResponseStatus.pageDoesNotExist:
+        if(mounted){
+          showDialog(context: context, builder: (BuildContext context){
+            return MiniAlertDialog(caption: alertMessagePageDoesNotExist);
+          });
+        }
+        break;
+      case ResponseStatus.serverDonTWork:
+        if(mounted){
+          showDialog(context: context, builder: (BuildContext context){
+            return MiniAlertDialog(caption: alertMessageServerDontWork);
+          });
+        }
+        break;
+      case ResponseStatus.unKnownError:
+        if(mounted){
+          showDialog(context: context, builder: (BuildContext context){
+            return MiniAlertDialog(caption: alertMessageUnknown);
+          });
+        }
+    }
+  }
   // Future<void> login() async{
   //   await Future.delayed(const Duration(seconds: 3), () {
   //     print(provider.authState.isAuthSuccess);
@@ -63,28 +121,34 @@ class _LoginScreenState extends State<LoginScreen> {
   //     )
   //   );
   // }
-  @override
-  initState() {
-    document.documentElement?.requestFullscreen();
-    super.initState();
-  }
+
+
+  // @override
+  // initState() {
+  //   document.documentElement?.requestFullscreen();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
+
     // Соотношение сторон у части экрана с полезным содержимым 1 к 1.696,
     // Если оно меньше, то по бокам добавляем пустые поля,
     // размер которых рассчитывается ниже.
 
     // Определяем достаточное ли соотношение сторон
+    final double targetAspectRatio = 1.696;
     final bool isPortraitOrientation = (
         (MediaQuery.of(context).size.height /
-            MediaQuery.of(context).size.width) > 1.696);
+            MediaQuery.of(context).size.width) > targetAspectRatio);
     // Определяем ширину полезной части. Остальное займут пустые поля.
     final double columnWidth = (isPortraitOrientation)
         ? MediaQuery.of(context).size.width
-        : (MediaQuery.of(context).size.height / 1.696);
-    // Опредиляем размер виртуального пикселя, на случай если оно будет надо.
-    final voxel = columnWidth / 375;
+        : (MediaQuery.of(context).size.height / targetAspectRatio);
+    // Опредиляем размер виртуального пикселя, для масштабирования логотипа.
+
+    // Ширина макета страницы:
+    final voxel = columnWidth / global.designerPageLayoutWidth;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -109,123 +173,153 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                   ),
                   const Expanded(flex: 3, child: SizedBox()),
-                  const Row(
-                    children: [
-                      Text(
-                        ' $telephoneNumberSrt',
-                        style: TextStyle(
-                          color: captionColor,
-                          fontFamily: 'Roboto',
-                          fontSize: 14
+                  AutofillGroup(
+                    child: Column(
+                      children: [
+                        const Row(
+                          children: [
+                            Text(
+                              ' $telephoneNumberSrt',
+                              style: TextStyle(
+                                color: captionColor,
+                                fontFamily: 'Roboto',
+                                fontSize: 14
+                              ),
+                            ),
+                            Text(
+                              '*',
+                              style: TextStyle(
+                                color: asterixColor,
+                                fontFamily: 'Roboto',
+                                fontSize: 14
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                      Text(
-                        '*',
-                        style: TextStyle(
-                          color: asterixColor,
-                          fontFamily: 'Roboto',
-                          fontSize: 14
-                        ),
-                      )
-                    ],
-                  ),
-                  Container(
-                     height: 44,
-                     alignment: Alignment.center,
-                     decoration: BoxDecoration(
-                       color: textFieldFillColor,
-                       borderRadius: BorderRadius.circular(8),
-                       border: Border.all(
-                         color: textFieldBorderColor,
-                         width: 1.5
-                       )
-                     ),
-                     child: const Padding(
-                       padding: EdgeInsets.only(left: 16, bottom: 10),
-                       child: TextField(
-                         // onChanged: (text){name = text;},
-                         cursorColor: captionColor,
-                         textAlignVertical: TextAlignVertical.top,
-                         style: TextStyle(
-                           color: captionColor,
-                           fontFamily: 'Roboto',
-                           fontSize: 15,
-
-                         ),
-                         decoration: InputDecoration(
-                           hintText: telephoneNumberHint,
-                           hintStyle: TextStyle(
-                             color: captionColor,
-                             fontFamily: 'Roboto400',
-                             fontSize: 15
-                           ),
-                           border: InputBorder.none
-                         ),
-                       ),
-                     ),
-                   ),
-                  const SizedBox(height: 16),
-                  const Row(
-                    children: [
-                      Text(
-                        ' $passwordStr',
-                        style: TextStyle(
-                          color: captionColor,
-                          fontFamily: 'Roboto',
-                          fontSize: 14
-                        ),
-                      ),
-                      Text(
-                        '*',
-                        style: TextStyle(
-                          color: asterixColor,
-                          fontFamily: 'Roboto',
-                          fontSize: 14
-                        ),
-                      )
-                    ],
-                  ),
-                  Container(
-                    height: 44,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: textFieldFillColor,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: textFieldBorderColor,
-                        width: 1.5
-                      )
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 16, bottom: 10),
-                      child: TextField(
-                        // onChanged: (text){name = text;},
-                        cursorColor: captionColor,
-                        textAlignVertical: TextAlignVertical.top,
-                        style: TextStyle(
-                          color: captionColor,
-                          fontFamily: 'Roboto',
-                          fontSize: 15
-                        ),
-                        decoration: InputDecoration(
-                          hintText: passwordHint,
-                          hintStyle: TextStyle(
-                            color: captionColor,
-                            fontFamily: 'Roboto',
-                            fontSize: 15
+                        Container(
+                          height: 44,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: textFieldFillColor,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: textFieldBorderColor,
+                              width: 1.5
+                            )
                           ),
-                          border: InputBorder.none
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16, bottom: 10),
+                            child: TextField(
+                              autofillHints: const [AutofillHints.username],
+                              onChanged: (text){_phoneNumber = text;},
+                              cursorColor: captionColor,
+                              textAlignVertical: TextAlignVertical.top,
+                              style: const TextStyle(
+                                color: captionColor,
+                                fontFamily: 'Roboto',
+                                fontSize: 15
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: telephoneNumberHint,
+                                hintStyle: TextStyle(
+                                  color: captionColor,
+                                  fontFamily: 'Roboto400',
+                                  fontSize: 15
+                                ),
+                                border: InputBorder.none
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                        const Row(
+                          children: [
+                            Text(
+                              ' $passwordStr',
+                              style: TextStyle(
+                                color: captionColor,
+                                fontFamily: 'Roboto',
+                                fontSize: 14
+                              ),
+                            ),
+                            Text(
+                              '*',
+                              style: TextStyle(
+                                color: asterixColor,
+                                fontFamily: 'Roboto',
+                                fontSize: 14
+                              ),
+                            )
+                          ],
+                        ),
+                        Container(
+                          height: 44,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: textFieldFillColor,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: textFieldBorderColor,
+                              width: 1.5
+                            )
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16, bottom: 10),
+                            child: TextField(
+                              autofillHints: const [AutofillHints.password],
+                              cursorColor: captionColor,
+                              obscureText: _isObscure,
+                              onChanged: (text){_password = text;},
+                              textAlignVertical: TextAlignVertical.top,
+                              style: const TextStyle(
+                                color: captionColor,
+                                fontFamily: 'Roboto',
+                                fontSize: 15
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: passwordHint,
+                                hintStyle: const TextStyle(
+                                  color: captionColor,
+                                  fontFamily: 'Roboto',
+                                  fontSize: 15
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isObscure ? Icons.visibility
+                                      : Icons.visibility_off,
+                                    color: captionColor,
+                                  ),
+                                  onPressed: (){
+                                    setState(() {
+                                      _isObscure = !_isObscure;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        Row(
+                          children: [
+                            const SizedBox(width: 2),
+                            RectangularButton(
+                              caption: signInStr,
+                              onTap: (){
+                                TextInput.finishAutofillContext();
+                                signIn();
+                                //   widget.logic.getToken(
+                                //   number: _phoneNumber,
+                                //   pass: _password
+                                // );
+                              },
+                            ),
+                            const SizedBox(width: 2)
+                          ]
+                        ),
+                      ]
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: RectangularButton(
-                      caption: signInStr,
-                      onTap: (){},
-                    )
                   ),
                   const SizedBox(height: 16),
                   const Row(
@@ -259,4 +353,30 @@ class _LoginScreenState extends State<LoginScreen> {
       )
     );
   }
+}
+
+/// Custom alert dialog.
+class MiniAlertDialog extends StatelessWidget{
+
+  final String caption;
+
+  MiniAlertDialog({
+    super.key,
+    required this.caption
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text(dialogTitle),
+      content: Text(caption),
+      actions: [
+        ElevatedButton(
+          onPressed: (){Navigator.of(context).pop();},
+          child: const Text(cancel)
+        ),
+      ],
+    );
+  }
+
 }
