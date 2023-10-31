@@ -13,6 +13,8 @@ import 'package:planner/login_screen/login_screen_logic.dart';
 import 'package:planner/login_screen/login_screen_paths.dart';
 import 'package:planner/login_screen/login_screen_theme.dart';
 
+import 'package:planner/monthly_calendar_screen/monthly_calendar_screen.dart';
+
 import 'package:planner/source/buttons.dart';
 
 // import 'package:http/http.dart' as http;
@@ -45,17 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// Open mine screen.
 
-  // void open(){
-  //   Navigator.push(
-  //           context, MaterialPageRoute(
-  //             builder: (context) {
-  //               print("дошло до сюда");
-  //               return MainPlannerScreen(widget.title, widget.mainWidth, appController, token);
-  //               // return MokScreen(widget.title, widget.mainWidth, appController, token);
-  //             }
-  //           )
-  //         );
-  // }
+  void open(){
+    Navigator.push(
+      context, MaterialPageRoute(builder: (_) => const Screen28())
+    );
+  }
 
   /// User Sign In.
   Future<void> signIn() async{
@@ -64,70 +60,37 @@ class _LoginScreenState extends State<LoginScreen> {
       case ResponseStatus.loginDataIncorrect:
         if(mounted){
           showDialog(context: context, builder: (BuildContext context){
-            return MiniAlertDialog(caption: alertMessageLoginDataIncorrect);
+            return const MiniAlertDialog(caption: alertMessageLoginDataIncorrect);
           });
         }
         break;
       case ResponseStatus.oK:
-        // if(mounted){// ToDo
-        //   open();
-        // }
+        if(mounted){// ToDo
+          open();
+        }
         break;
       case ResponseStatus.pageDoesNotExist:
         if(mounted){
           showDialog(context: context, builder: (BuildContext context){
-            return MiniAlertDialog(caption: alertMessagePageDoesNotExist);
+            return const MiniAlertDialog(caption: alertMessagePageDoesNotExist);
           });
         }
         break;
       case ResponseStatus.serverDonTWork:
         if(mounted){
           showDialog(context: context, builder: (BuildContext context){
-            return MiniAlertDialog(caption: alertMessageServerDontWork);
+            return const MiniAlertDialog(caption: alertMessageServerDontWork);
           });
         }
         break;
       case ResponseStatus.unKnownError:
         if(mounted){
           showDialog(context: context, builder: (BuildContext context){
-            return MiniAlertDialog(caption: alertMessageUnknown);
+            return const MiniAlertDialog(caption: alertMessageUnknown);
           });
         }
     }
   }
-  // Future<void> login() async{
-  //   await Future.delayed(const Duration(seconds: 3), () {
-  //     print(provider.authState.isAuthSuccess);
-  //   });
-  //   final String token = provider.authState.token;//"44d8fdc7dc9c0a05c5f0bcbe4f32b2fdd5f02424";
-  //   print(token);
-  //   await provider.postRequest(token);
-  //   await provider.contactListRequest(token);
-  //   List<Contact> contactList = provider.contactList;
-  //
-  //   String responseAnswer = utf8.decode(provider.postResponse.response.bodyBytes);
-  //   final Person person = Person.fromJson(jsonDecode(responseAnswer));
-  //   print('праздников пришло ${person.celebrates.length}');
-  //   print("${person.celebrates[0].id}, ${person.celebrates[0].day} ${person.celebrates[0].month} ${person.celebrates[0].date}");
-  //   print("${person.celebrates[0].name}, ${person.celebrates[0].icon} ${person.celebrates[0].peopleCategory} ${person.celebrates[0].celebrateCategory}");
-  //   AppController appController = AppController(person, contactList);
-  //   Navigator.push(
-  //     context, MaterialPageRoute(
-  //       builder: (context) {
-  //         print("дошло до сюда");
-  //         return MainPlannerScreen(widget.title, widget.mainWidth, appController, token);
-  //         // return MokScreen(widget.title, widget.mainWidth, appController, token);
-  //       }
-  //     )
-  //   );
-  // }
-
-
-  // @override
-  // initState() {
-  //   document.documentElement?.requestFullscreen();
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // размер которых рассчитывается ниже.
 
     // Определяем достаточное ли соотношение сторон
-    final double targetAspectRatio = 1.696;
+    const double targetAspectRatio = 1.696;
     final bool isPortraitOrientation = (
         (MediaQuery.of(context).size.height /
             MediaQuery.of(context).size.width) > targetAspectRatio);
@@ -360,7 +323,7 @@ class MiniAlertDialog extends StatelessWidget{
 
   final String caption;
 
-  MiniAlertDialog({
+  const MiniAlertDialog({
     super.key,
     required this.caption
   });
