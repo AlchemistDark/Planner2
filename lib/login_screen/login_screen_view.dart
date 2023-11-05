@@ -17,22 +17,16 @@ import 'package:planner/monthly_calendar_screen/monthly_calendar_screen.dart';
 
 import 'package:planner/source/buttons.dart';
 
-// import 'package:http/http.dart' as http;
-//
-// import 'global/app_controller.dart';
-// import 'global/person_class.dart';
-// import 'global/planner_app_bar.dart';
-// import 'global/provider.dart';
-// import 'main_screen/planner_main_screen_view.dart';
-
-/// Screen 1.3
+/// Screen 1.3 from Figma layout.
 class LoginScreen extends StatefulWidget {
+
+  static const route = '/sign_in';
 
   final LoginLogic logic;
 
   const LoginScreen({
     super.key,
-    required this.logic,
+    required this.logic
   });
 
   @override

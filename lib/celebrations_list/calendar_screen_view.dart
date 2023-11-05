@@ -1,11 +1,14 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 
 import 'package:planner/celebrate_list/celebrate_choice_screen_view.dart';
 // import 'package:site_xz/detail_contact_screen_view.dart';
 import 'buttons.dart';
 import 'paths.dart';
-import 'planner_app_bar.dart';
+import '../source/planner_app_bar/planner_app_bar.dart';
 import 'theme.dart';
 // import 'package:site_xz/add_contact_screen_view.dart';
 // import 'package:site_xz/edit_contact_screen_view.dart';
@@ -45,12 +48,34 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
 
+  int id = 1000;
   final ScrollController _scrollControllerCelebratesBlock = ScrollController();
   final ScrollController _scrollControllerCategoriesBlock = ScrollController();
 
   String dateString = "0000-00-00";
 
   _CalendarScreenState();
+
+  Future<List<Celebrate>> celebrationsListRequest(String token) async {
+    List<Celebrate> celebrationsList = [];
+    http.Response postR = await http.post(
+        Uri.https('qviz.fun', 'api/v1/holidays/'),
+        headers: {"Authorization": 'Token $token'}
+    );
+    print("праздники ${utf8.decode(postR.bodyBytes)}");
+    final Map<String, dynamic> json = jsonDecode(utf8.decode(postR.bodyBytes));
+    var temp = (json["holidays"] as List<dynamic>);
+    for (var i in temp){
+      Celebrate celebrate = Celebrate.fromJson(i as Map<String, dynamic>);
+      celebrationsList.add(celebrate);
+      if (id < celebrate.id) {id = celebrate.id;}
+    }
+    print("контакты $celebrationsList");
+    print("имя ${celebrationsList[1].name} дата ${celebrationsList[1].date}");//  ДР ${contactList[1].birthday} город ${contactList[1].region}");
+    // print("фон ${contactList[1].phone} тг ${contactList[1].telegram} имэйл ${contactList[1].email}");
+    // print("кат ${contactList[1].cat} пол ${contactList[1].sex} статус ${contactList[1].status}");
+    return celebrationsList;
+  }
 
   Future<void> openCelebrationChoiceScreen(AppTheme theme, int id)async{
 
@@ -870,6 +895,46 @@ class _AddButtonState extends State<AddButton> {
           });
           widget.onPressed();
         }
+    );
+  }
+}
+
+class Celebrate{
+  final int id; // server JSON "id":421,
+  final String name; // server JSON "name":"Свадебное торжество",
+  final String date; // server JSON "date":"2022-07-07",
+  final int month; // server JSON "month":6,
+  final int day; // server JSON "day":8,
+  final List<int> celebrateCategory; // server JSON "holiday_cat":1,
+  final List<int> peopleCategory; // server JSON "people_cat":1,
+  final String icon; // server JSON "icons":"icon66"},
+
+  Celebrate({
+    required this.id,
+    required this.name,
+    required this.date,
+    required this.month,
+    required this.day,
+    required this.celebrateCategory,
+    required this.peopleCategory,
+    required this.icon,
+  });
+
+// ToDo Здесь могут быть ошибки, если сервер возвращает null
+  factory Celebrate.fromJson(Map<String, dynamic> json){
+    return Celebrate(
+        id: json["id"] as int,
+        name: json["name"] as String,
+        date: json["date"] as String,
+        month: (json["month"] != null)? json["month"] as int: 0,
+        day: (json["day"] != null)? json["day"] as int: 0,
+        celebrateCategory: (json["holiday_cat"] as List<dynamic>)
+            .map((dynamic e) => e as int)
+            .toList(),
+        peopleCategory: (json["people_cat"] as List<dynamic>)
+            .map((dynamic e) => e as int)
+            .toList(),
+        icon:  (json["icons"] != null)? json["icons"] as String : "Null"
     );
   }
 }

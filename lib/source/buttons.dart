@@ -6,8 +6,9 @@ import 'package:planner/source/buttons_theme.dart';
 class RectangularButton extends StatelessWidget {
   final String caption;
   final Function onTap;
+  final BtnTheme theme = BtnTheme();
 
-  const RectangularButton({
+  RectangularButton({
     required this.caption,
     required this.onTap,
     Key? key
@@ -26,20 +27,20 @@ class RectangularButton extends StatelessWidget {
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              gradient: buttonGradient,
+              gradient: theme.buttonGradient,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: buttonColor,
+                color: theme.buttonColor,
                 width: 1,
               ),
             ),
             child: Text(
               caption,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: buttonColor
+                color: theme.buttonColor
               ),
               textAlign: TextAlign.center,
             )

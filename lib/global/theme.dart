@@ -1,18 +1,49 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 // import 'package:site_xz/global/paths.dart';
 
-/// Custom theme model.
+// Custom theme model.
+
 AppTheme? appTheme;
 
+ThemeState? themeState;
+
+Stream<ThemeState> get state => _sCtrl.stream;
+final StreamController<ThemeState> _sCtrl
+  = StreamController<ThemeState>.broadcast();
+
+// appTheme != null потому, что создаётся перед запуском приложения
+// в main.dart.
+void themeChange(){
+  if (appTheme!.isDark){
+    appTheme = AppTheme.light();
+  }else{
+    appTheme = AppTheme.dark();
+  }
+  themeState = ThemeState(isDark: appTheme!.isDark);
+  _sCtrl.add(themeState!);
+  print ("смена темы");
+}
+
 class AppTheme{
+
   final bool isDark;
+
+  final Color mainGreenColor = const Color(0xFF52B69A);
+  final Color mainPinkColor = const Color(0xFFCE3B82);
+  final Color mainWhiteColor = const Color(0xFFFFFFFF);
+
+  final Color familyGroupButtonColor = const Color(0xFF53AABE);
+  final Color friendsGroupButtonColor = const Color(0xFF678FDA);
+  final Color relativesGroupButtonColor = const Color(0xFF7B6CE8);
+  final Color colleaguesGroupButtonColor = const Color(0xFFB668EC);
+  final Color partnersGroupButtonColor = const Color(0xFFEC69E4);
 
   // final String logoPath;
   // final String buttonBasePath;
 
-  // final Color appBarColor;
-  // final Color appBarTextColor;
   // final Color avatarText1Color;
   // final Color avatarText2Color;
   // final Color celebrateStatusColor;
@@ -44,16 +75,6 @@ class AppTheme{
 
   // final buttonIconColor = const Color(0xFFA6ADB5);
 
-  static const mainGreenColor = Color(0xFF52B69A);
-  static const mainPinkColor = Color(0xFFCE3B82);
-  static const mainWhiteColor = Color(0xFFFFFFFF);
-
-  static const familyGroupButtonColor = Color(0xFF53AABE);
-  static const friendsGroupButtonColor = Color(0xFF678FDA);
-  static const relativesGroupButtonColor = Color(0xFF7B6CE8);
-  static const colleaguesGroupButtonColor = Color(0xFFB668EC);
-  static const partnersGroupButtonColor = Color(0xFFEC69E4);
-
   // final yearArrowTailColor = const Color(0xFF9DA7B0);
   // final yearCircularFaceDecorColor = const Color(0xFF547CC7);
   //
@@ -69,11 +90,10 @@ class AppTheme{
   // final celebrateIconDefaultColor = const Color(0xFF9388CC);
 
   AppTheme.light({
-    this.isDark = false,
+    this.isDark = false
     // this.logoPath = lightLogo,
     // this.buttonBasePath = lightButtonsBase,
-    // this.appBarColor = const Color(0xFFF0F7FE),
-    // this.appBarTextColor = const Color(0xFF161A1D),
+
     // this.avatarText1Color = const Color(0xFF161A1D),
     // this.avatarText2Color = const Color(0xFF627684),
     // this.celebrateStatusColor = const Color(0xFFFFFFFF),
@@ -102,16 +122,18 @@ class AppTheme{
     // this.yearCircularArrowCenterColor = const Color(0xFFFFFFFF),
     // this.yearCircularArrowColor = const Color(0xFF627684),
     // this.yearCircularArrowTextColor = const Color(0xFF627684)
-  });
+  }){
+    themeState = const ThemeState(isDark: false);
+  }
 
   AppTheme.dark({
-    this.isDark = true,
+    this.isDark = true
     // this.logoPath = darkLogo,
     // this.buttonBasePath = darkButtonsBase,
-    // this.appBarTextColor = const Color(0xFFFFFFFF),
+
     // this.avatarText1Color = const Color(0xFFE0EBED),
     // this.avatarText2Color = const Color(0xFFBCC0C8),
-    // this.appBarColor = const Color(0xFF1B1C22),
+
     // this.celebrateStatusColor = const Color(0xFF43484E),
     // this.celebrateTextBackgroundColor = const Color(0xFF24262D),
     // this.celebrateTextColor = const Color(0xFF8F99A3),
@@ -138,7 +160,9 @@ class AppTheme{
     // this.yearCircularArrowCenterColor = const Color(0xFF43454E),
     // this.yearCircularArrowColor = const Color(0xFF52B69A),
     // this.yearCircularArrowTextColor = const Color(0xFFFFFFFF)
-  });
+  }){
+    themeState = const ThemeState(isDark: true);
+  }
 
 }
 
@@ -154,3 +178,11 @@ class AppTheme{
 // const arrowDarkColor = Color(0xFFB4B4B8);
 
 // const arrowTailTextDarkColor = Color(0xFFA9BDE3);
+
+class ThemeState{
+
+  final bool isDark;
+
+  const ThemeState({required this.isDark});
+
+}

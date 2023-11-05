@@ -12,9 +12,7 @@ class LoginLogic{
 
   ResponseStatus responseStatus = ResponseStatus.unKnownError;
 
-  final http.Client client;
-
-  LoginLogic({required this.client});
+  LoginLogic();
 
   /// JSON parsing function that the server produces in response
   /// to a request for an access token.
@@ -46,7 +44,7 @@ class LoginLogic{
 
   /// Function for obtaining an access token to the backend server.
   Future<http.Response?> getToken({required String number, required String pass}) async {
-    http.Response? response = await client.post(
+    http.Response? response = await global.client.post(
       Uri.parse(_tokenURL),
       body: {
         'phoneNumber': number,

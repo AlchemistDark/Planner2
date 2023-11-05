@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:planner/celebrate_list/calendar_screen_view.dart';
-import 'package:planner/celebrate_list/theme.dart' as theme;
+import 'package:planner/celebrations_list/celebrations_list_logic.dart';
+import 'package:planner/celebrations_list/celebrations_list_screen.dart';
 
 import 'package:planner/monthly_calendar_screen/date_time_bloc.dart';
 import 'package:planner/monthly_calendar_screen/date_time_event.dart';
@@ -85,10 +85,8 @@ class _Screen28State extends State<Screen28> {
       Navigator.push(
           context, MaterialPageRoute(
           builder: (context) {
-            return CalendarScreen(
-                "Праздиник или событие",
-                celebrationsList,
-                theme.AppTheme.light()
+            return CelebrationsListScreen(
+              logic: CelebrationsListLogic()
             );
           }
       )

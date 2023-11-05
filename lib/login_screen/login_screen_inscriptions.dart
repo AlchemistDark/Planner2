@@ -1,6 +1,6 @@
-import 'package:planner/source/inscriotions.dart' as source;
+import 'package:planner/source/inscriptions.dart' as source;
 
-/// The string constants for login_screen are listed here.
+// Здесь перечислены русскоязычные строковые константы для экрана 1.3.
 
 const String alertMessageUnknown = "Неизвестная ошибка.";
 const String alertMessageServerDontWork =
